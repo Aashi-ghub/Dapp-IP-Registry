@@ -5,11 +5,11 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useWallet } from "@/components/wallet-provider"
 import { Button } from "@/components/ui/button"
-import { Menu, X, LogOut, Search, FileText, AlertTriangle, Coins, Home, FileCheck } from "lucide-react"
+import { Menu, X, LogOut, Search, FileText, AlertTriangle, Coins, Home, FileCheck, Loader2 } from "lucide-react"
 import { CopyToClipboard } from "@/components/copy-to-clipboard"
 
 export function Navbar() {
-  const { isConnected, principalId, disconnect } = useWallet()
+  const { isConnected, principalId, disconnect, connect, isConnecting } = useWallet()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const pathname = usePathname()
@@ -73,7 +73,7 @@ export function Navbar() {
         </div>
 
         <div className="hidden md:flex items-center space-x-2">
-          {isConnected && (
+          {isConnected ? (
             <div className="flex items-center px-3 py-1.5 rounded-full bg-muted/50 border border-border/50">
               <CopyToClipboard
                 text={principalId || ""}
@@ -84,6 +84,19 @@ export function Navbar() {
                 <LogOut className="h-3.5 w-3.5" />
               </Button>
             </div>
+          ) : (
+            <Button 
+              size="sm" 
+              className="rounded-full px-4 hover-lift"
+              onClick={connect}
+              disabled={isConnecting}
+            >
+              {isConnecting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Connecting...</>
+              ) : (
+                "Connect Wallet"
+              )}
+            </Button>
           )}
         </div>
 
@@ -159,10 +172,17 @@ export function Navbar() {
           ) : (
             <Button
               className="w-full rounded-lg"
-              onClick={() => setIsMenuOpen(false)}
-              asChild
+              onClick={() => {
+                connect()
+                setIsMenuOpen(false)
+              }}
+              disabled={isConnecting}
             >
-              <Link href="/auth">Connect Wallet</Link>
+              {isConnecting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Connecting...</>
+              ) : (
+                "Connect Wallet"
+              )}
             </Button>
           )}
         </div>

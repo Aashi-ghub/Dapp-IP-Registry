@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
@@ -36,9 +36,11 @@ export default function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   // Redirect to auth if not connected
-  if (!isConnected) {
-    router.push("/auth")
-  }
+  useEffect(() => {
+    if (!isConnected) {
+      router.push("/auth")
+    }
+  }, [isConnected, router])
 
   const handleFileSelected = (selectedFile: File) => {
     setFile(selectedFile)
