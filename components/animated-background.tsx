@@ -1,11 +1,31 @@
 "use client"
 
-import { useEffect, useRef } from "react"
-import { useTheme } from "next-themes"
+import { useEffect, useRef, useState } from "react"
 
-export function AnimatedBackground() {
+interface AnimatedBackgroundProps {
+  className?: string;
+  density?: 'low' | 'medium' | 'high';
+}
+
+export function AnimatedBackground({ 
+  className = "fixed top-0 left-0 w-full h-full -z-10 opacity-40",
+  density = 'medium' 
+}: AnimatedBackgroundProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { theme } = useTheme()
+  const [isReducedMotion, setIsReducedMotion] = useState(false)
+
+  useEffect(() => {
+    // Check for reduced motion preference
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    setIsReducedMotion(mediaQuery.matches)
+    
+    const handleMotionPreferenceChange = () => setIsReducedMotion(mediaQuery.matches)
+    mediaQuery.addEventListener('change', handleMotionPreferenceChange)
+    
+    return () => {
+      mediaQuery.removeEventListener('change', handleMotionPreferenceChange)
+    }
+  }, [])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -14,20 +34,42 @@ export function AnimatedBackground() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
-    const isDark = theme === "dark"
-
-    // Set canvas dimensions
+    // Set canvas dimensions with higher resolution for retina displays
     const resizeCanvas = () => {
-      canvas.width = window.innerWidth
-      canvas.height = window.innerHeight
+      const dpr = window.devicePixelRatio || 1
+      canvas.width = window.innerWidth * dpr
+      canvas.height = window.innerHeight * dpr
+      canvas.style.width = `${window.innerWidth}px`
+      canvas.style.height = `${window.innerHeight}px`
+      ctx.scale(dpr, dpr)
     }
 
     resizeCanvas()
     window.addEventListener("resize", resizeCanvas)
 
+    // Calculate particle count based on screen size and density setting
+    const getDensityMultiplier = () => {
+      switch (density) {
+        case 'low': return 0.5
+        case 'high': return 1.25
+        default: return 0.8
+      }
+    }
+
     // Create particles
     const particlesArray: Particle[] = []
-    const numberOfParticles = Math.min(50, window.innerWidth / 20)
+    const baseDensity = Math.min(25, window.innerWidth / 50)
+    const numberOfParticles = Math.floor(baseDensity * getDensityMultiplier())
+
+    // Colors for dark mode (we're enforcing dark mode)
+    const getParticleColor = () => {
+      // Blue palette for dark mode
+      return `rgba(${Math.random() * 50 + 50}, ${Math.random() * 80 + 100}, ${Math.random() * 100 + 155}, ${Math.random() * 0.25 + 0.15})`
+    }
+
+    const getConnectionColor = (opacity: number) => {
+      return `rgba(${76 + Math.random() * 20}, ${61 + Math.random() * 20}, ${209 + Math.random() * 46}, ${opacity * 0.35})`
+    }
 
     class Particle {
       x: number
@@ -36,27 +78,37 @@ export function AnimatedBackground() {
       speedX: number
       speedY: number
       color: string
+      originalSize: number
+      pulse: boolean
+      pulseSpeed: number
 
       constructor() {
-        this.x = canvas ? Math.random() * canvas.width : 0
-        this.y = canvas ? Math.random() * canvas.height : 0
-        this.size = Math.random() * 3 + 1
-        this.speedX = (Math.random() - 0.5) * 0.5
-        this.speedY = (Math.random() - 0.5) * 0.5
-        this.color = isDark
-          ? `rgba(${Math.random() * 50 + 100}, ${Math.random() * 50 + 100}, ${Math.random() * 255}, ${Math.random() * 0.5 + 0.2})`
-          : `rgba(${Math.random() * 50 + 150}, ${Math.random() * 255}, ${Math.random() * 50 + 150}, ${Math.random() * 0.3 + 0.1})`
+        this.x = canvas ? Math.random() * window.innerWidth : 0
+        this.y = canvas ? Math.random() * window.innerHeight : 0
+        this.originalSize = Math.random() * 1.5 + 0.5
+        this.size = this.originalSize
+        this.speedX = (Math.random() - 0.5) * (isReducedMotion ? 0.1 : 0.25)
+        this.speedY = (Math.random() - 0.5) * (isReducedMotion ? 0.1 : 0.25)
+        this.color = getParticleColor()
+        this.pulse = Math.random() > 0.6 // Reduce number of pulsing particles
+        this.pulseSpeed = Math.random() * 0.006 + 0.001 // Slower pulse
       }
 
       update() {
         this.x += this.speedX
         this.y += this.speedY
 
-        if (canvas && this.x > canvas.width) this.x = 0
-        else if (this.x < 0 && canvas) this.x = canvas.width
+        // Gentle pulsing effect
+        if (!isReducedMotion && this.pulse) {
+          this.size = this.originalSize + Math.sin(Date.now() * this.pulseSpeed) * 0.2 // Less dramatic pulse
+        }
 
-        if (canvas && this.y > canvas.height) this.y = 0
-        else if (this.y < 0 && canvas) this.y = canvas.height
+        // Wrap around screen edges
+        if (this.x > window.innerWidth) this.x = 0
+        else if (this.x < 0) this.x = window.innerWidth
+
+        if (this.y > window.innerHeight) this.y = 0
+        else if (this.y < 0) this.y = window.innerHeight
       }
 
       draw() {
@@ -77,16 +129,18 @@ export function AnimatedBackground() {
     init()
 
     const connectParticles = () => {
+      const connectionDistance = window.innerWidth < 768 ? 60 : 80
+      
       for (let a = 0; a < particlesArray.length; a++) {
         for (let b = a; b < particlesArray.length; b++) {
           const dx = particlesArray[a].x - particlesArray[b].x
           const dy = particlesArray[a].y - particlesArray[b].y
           const distance = Math.sqrt(dx * dx + dy * dy)
 
-          if (distance < 100) {
-            const opacity = 1 - distance / 100
-            ctx.strokeStyle = isDark ? `rgba(138, 43, 226, ${opacity * 0.4})` : `rgba(0, 128, 128, ${opacity * 0.2})`
-            ctx.lineWidth = 1
+          if (distance < connectionDistance) {
+            const opacity = 1 - distance / connectionDistance
+            ctx.strokeStyle = getConnectionColor(opacity)
+            ctx.lineWidth = 0.5
             ctx.beginPath()
             ctx.moveTo(particlesArray[a].x, particlesArray[a].y)
             ctx.lineTo(particlesArray[b].x, particlesArray[b].y)
@@ -98,14 +152,19 @@ export function AnimatedBackground() {
 
     const animate = () => {
       requestAnimationFrame(animate)
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
 
-      particlesArray.forEach((particle) => {
-        particle.update()
-        particle.draw()
-      })
+      // If reduced motion is enabled, slow down the animation
+      const updateInterval = isReducedMotion ? 3 : 1
+      
+      if (Date.now() % updateInterval === 0) {
+        particlesArray.forEach((particle) => {
+          particle.update()
+          particle.draw()
+        })
 
-      connectParticles()
+        connectParticles()
+      }
     }
 
     animate()
@@ -113,8 +172,8 @@ export function AnimatedBackground() {
     return () => {
       window.removeEventListener("resize", resizeCanvas)
     }
-  }, [theme])
+  }, [density, isReducedMotion])
 
-  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10 opacity-40" />
+  return <canvas ref={canvasRef} className={className} />
 }
 

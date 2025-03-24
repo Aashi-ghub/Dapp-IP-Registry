@@ -77,14 +77,14 @@ export function FileUpload({ onFileSelected }: FileUploadProps) {
             </div>
             <div>
               <p className="text-lg font-medium">Drag & Drop Your File Here</p>
-              <p className="text-sm text-muted-foreground mt-1">or click to browse (max 10MB)</p>
+              <p className="text-sm text-muted-foreground mt-1">or click to browse</p>
             </div>
             <Input
               ref={inputRef}
               type="file"
               className="hidden"
               onChange={handleFileChange}
-              accept="image/*,audio/*,video/*,application/pdf"
+              accept="*/*"
             />
             <Button variant="outline" onClick={() => inputRef.current?.click()}>
               Select File

@@ -10,7 +10,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 164 75% 45%;
+    --primary: 224 82% 56%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -22,8 +22,8 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 164 75% 45%;
-    --radius: 0.5rem;
+    --ring: 224 82% 56%;
+    --radius: 0.75rem;
   }
 
   .dark {
@@ -33,7 +33,7 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 263 70% 50%;
+    --primary: 224 76% 65%;
     --primary-foreground: 210 40% 98%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
@@ -45,7 +45,7 @@
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 263 70% 50%;
+    --ring: 224 76% 65%;
   }
 }
 
@@ -59,11 +59,11 @@
 }
 
 .glow-text {
-  text-shadow: 0 0 10px rgba(var(--primary), 0.5);
+  text-shadow: 0 0 15px rgba(var(--primary), 0.7);
 }
 
 .glass-card {
-  @apply bg-white/10 backdrop-blur-md border border-white/20 dark:bg-black/20 dark:border-primary/20;
+  @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-lg shadow-primary/10 dark:bg-black/30 dark:border-primary/20 transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:border-white/30 dark:hover:border-primary/40;
 }
 
 .grid-pattern {
@@ -85,5 +85,84 @@
   100% {
     transform: translateY(0px);
   }
+}
+
+/* Blur effect for background elements */
+.blur-backdrop {
+  @apply backdrop-blur-xl bg-white/5 border border-white/10 dark:bg-black/10 dark:border-white/5;
+}
+
+/* Gradient border effect */
+.gradient-border {
+  position: relative;
+  border-radius: 9999px; /* Full rounded for circle */
+  background-clip: padding-box;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin: -2px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg, 
+    hsl(var(--primary)), 
+    hsl(220, 100%, 70%), 
+    hsl(240, 100%, 70%)
+  );
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+  box-shadow: 0 0 15px 1px hsla(var(--primary), 0.3);
+}
+
+.gradient-border:hover::before {
+  opacity: 1;
+  box-shadow: 0 0 20px 2px hsla(var(--primary), 0.5);
+}
+
+/* Improved animations */
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Smooth hover transition for all interactive elements */
+.hover-lift {
+  @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #121212;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.7);
 }
 

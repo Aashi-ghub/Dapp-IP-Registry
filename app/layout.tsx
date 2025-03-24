@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { WalletProvider } from "@/components/wallet-provider"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -19,10 +20,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
+    <html lang="en" className="dark" style={{colorScheme: 'dark'}} suppressHydrationWarning>
+      <body className={`${inter.className} bg-black text-white`}>
+        <ThemeProvider>
           <WalletProvider>{children}</WalletProvider>
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
