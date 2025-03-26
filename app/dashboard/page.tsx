@@ -265,7 +265,7 @@ export default function DashboardPage() {
       <Navbar />
       <AnimatedBackground className="fixed inset-0 -z-10" density="low" />
       
-      <div className="container mx-auto flex-1 px-4 py-8">
+      <div className="container mx-auto flex-1 px-4 py-18">
         <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">IP Dashboard</h1>
         
         {isLoading ? (

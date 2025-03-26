@@ -150,7 +150,7 @@ export default function RegisterPage() {
       <AnimatedBackground />
       <Navbar />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-16">
         <div className="container px-4 md:px-6">
           <div className="max-w-3xl mx-auto">
             <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Register Your Work</h1>

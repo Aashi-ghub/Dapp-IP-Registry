@@ -16,7 +16,7 @@ export default function Home() {
       <main className="flex-1 relative z-10">
         {/* Hero Section */}
      
-<section className="relative py-24 md:py-32 overflow-hidden">
+<section className="relative py-24 md:py-36 overflow-hidden">
 
   {/* 🔥 Background Video */}
   <video

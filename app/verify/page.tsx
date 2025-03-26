@@ -418,7 +418,7 @@ export default function VerifyPage() {
         <AnimatedBackground />
         <Navbar />
 
-        <main className="flex-1 flex items-center justify-center py-12">
+        <main className="flex-1 flex items-center justify-center py-18">
           <div className="container px-4 md:px-6">
             <div className="glass-card p-8 md:p-12 rounded-lg max-w-md mx-auto">
               <div className="space-y-6 text-center">
