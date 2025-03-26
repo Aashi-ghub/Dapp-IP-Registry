@@ -1,9 +1,9 @@
 import Link from "next/link"
-import { Github, Twitter, Heart, Shield } from "lucide-react"
+import { Github, Twitter, Heart, Shield, Copyright } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/20 py-8 bg-background/50 backdrop-blur-sm relative mt-auto">
+    <footer className="border-t border-border/20 py-8 bg-black/50 text-white rounded-sm font-quicksand backdrop-blur-sm relative mt-auto">
       <div className="container px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="space-y-4">
@@ -51,9 +51,9 @@ export function Footer() {
           </p>
           
           <div className="flex items-center text-xs text-muted-foreground order-3 sm:order-2">
-            <span>Made with</span>
-            <Heart className="h-3 w-3 mx-1 text-red-500" />
-            <span>for the ICP Hackathon</span>
+
+            <Copyright className="h-3 w-3 mx-1 text-blue-500" />
+            <span>2025 IP REGISTRY. All rights reserved.</span>
           </div>
           
           <div className="flex items-center space-x-4 order-2 sm:order-3">

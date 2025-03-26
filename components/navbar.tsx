@@ -40,15 +40,15 @@ export function Navbar() {
   }, [pathname])
 
   return (
-    <nav className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-      scrolled 
-        ? "bg-background/90 backdrop-blur-lg shadow-md" 
-        : "bg-background/70 backdrop-blur-md"
-    } border-b border-border/40`}>
+    <nav style={{
+      backgroundColor: "transparent",
+      backdropFilter: "blur(8px)",
+    }}
+    className="fixed top-0 w-full z-50">
       <div className="container flex items-center justify-between h-16 px-4 mx-auto">
         <div className="flex items-center">
           <Link href="/" className="flex items-center group">
-            <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500 transition-all duration-300 group-hover:scale-105">
+            <span className="text-xl font-bold bg-clip-text text-white transition-all duration-300 group-hover:scale-105">
               IP Registry
             </span>
           </Link>
@@ -60,10 +60,10 @@ export function Navbar() {
             <Link
               key={item.path}
               href={item.path}
-              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-muted flex items-center ${
+              className={`px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-white/10 flex items-center ${
                 pathname === item.path 
-                  ? "text-primary bg-primary/10" 
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-white bg-white/10" 
+                  : "text-white hover:white/20"
               }`}
             >
               <span className="block">{item.icon}</span>
@@ -87,7 +87,7 @@ export function Navbar() {
           ) : (
             <Button 
               size="sm" 
-              className="rounded-full px-4 hover-lift"
+              className="rounded-full bg-white text-black px-4 hover-lift"
               onClick={connect}
               disabled={isConnecting}
             >
