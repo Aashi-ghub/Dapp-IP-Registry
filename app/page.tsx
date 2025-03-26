@@ -52,7 +52,7 @@ export default function Home() {
         <Button asChild size="lg" className="text-md px-8 rounded-full bg-white text-black full hover-lift">
           <Link href="/register">Register Your Work</Link>
         </Button>
-        <Button asChild variant="outline" size="lg" className="text-md bg-black border-white  rounded-full group hover-lift">
+        <Button asChild variant="outline" size="lg" className="text-md bg-black  rounded-full group hover-lift">
           <Link href="/verify" className="flex items-center">
             Verify Ownership
             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
