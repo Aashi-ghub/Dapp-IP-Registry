@@ -461,256 +461,254 @@ export default function VerifyPage() {
       <AnimatedBackground />
       <Navbar />
 
-      <main className="flex-1 py-12">
-        <div className="container px-4 md:px-6">
-          <div className="max-w-5xl mx-auto">
-            <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Verify Digital IP</h1>
+      <main className="flex-1 container px-4 md:px-6 pt-24 pb-16">
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-4xl font-bold mb-8 bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">Verify Digital IP</h1>
 
-            <Tabs defaultValue="hash" className="glass-card rounded-lg p-6">
-              <TabsList className="grid w-full grid-cols-2 mb-6">
-                <TabsTrigger value="hash">Verify by Hash</TabsTrigger>
-                <TabsTrigger value="file">Verify by File</TabsTrigger>
-              </TabsList>
+          <Tabs defaultValue="hash" className="glass-card rounded-lg p-6">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="hash">Verify by Hash</TabsTrigger>
+              <TabsTrigger value="file">Verify by File</TabsTrigger>
+            </TabsList>
 
-              <TabsContent value="hash">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="hash">File Hash</Label>
-                    <div className="flex items-center gap-2">
-                      <Input
-                        id="hash"
-                        placeholder="Enter the SHA-256 hash of the file"
-                        value={hash}
-                        onChange={(e) => setHash(e.target.value)}
-                        className="flex-1"
-                      />
-                      <Button 
-                        onClick={() => handleVerify()}
-                        disabled={isVerifying || !hash}
-                      >
-                        {isVerifying ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Verifying...
-                          </>
-                        ) : "Verify"}
-                      </Button>
+            <TabsContent value="hash">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="hash">File Hash</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      id="hash"
+                      placeholder="Enter the SHA-256 hash of the file"
+                      value={hash}
+                      onChange={(e) => setHash(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button 
+                      onClick={() => handleVerify()}
+                      disabled={isVerifying || !hash}
+                    >
+                      {isVerifying ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Verifying...
+                        </>
+                      ) : "Verify"}
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Enter the SHA-256 hash of the file you want to verify
+                  </p>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="file">
+              <div className="space-y-6">
+                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors">
+                  <div className="space-y-4">
+                    <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                      <UploadCloud className="h-6 w-6 text-primary" />
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Enter the SHA-256 hash of the file you want to verify
-                    </p>
+                    
+                    <div className="space-y-2">
+                      <h3 className="text-lg font-medium">Upload File to Verify</h3>
+                      <p className="text-sm text-muted-foreground max-w-md mx-auto">
+                        Drag and drop your file here, or click to browse
+                      </p>
+                    </div>
+                    
+                    <Input
+                      id="file"
+                      type="file"
+                      onChange={handleFileUpload}
+                      className="hidden"
+                    />
+                    <Button 
+                      onClick={() => document.getElementById('file')?.click()}
+                      variant="outline"
+                      className="mt-2"
+                    >
+                      Choose File
+                    </Button>
+                    
+                    {uploadedFile && (
+                      <div className="mt-4 flex items-center justify-center gap-2 text-sm">
+                        <FileIcon className="h-4 w-4 text-primary" />
+                        <span>{uploadedFile.name}</span>
+                        <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </TabsContent>
+                
+                <Button 
+                  onClick={handleVerifyFile}
+                  disabled={isVerifying || isHashing || !uploadedFile}
+                  className="w-full"
+                >
+                  {isHashing ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Computing hash...
+                    </>
+                  ) : isVerifying ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Verifying...
+                    </>
+                  ) : (
+                    <>
+                      <Shield className="h-4 w-4 mr-2" />
+                      Verify File
+                    </>
+                  )}
+                </Button>
+              </div>
+            </TabsContent>
+          </Tabs>
 
-              <TabsContent value="file">
-                <div className="space-y-6">
-                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary transition-colors">
-                    <div className="space-y-4">
-                      <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                        <UploadCloud className="h-6 w-6 text-primary" />
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <h3 className="text-lg font-medium">Upload File to Verify</h3>
-                        <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                          Drag and drop your file here, or click to browse
-                        </p>
-                      </div>
-                      
-                      <Input
-                        id="file"
-                        type="file"
-                        onChange={handleFileUpload}
-                        className="hidden"
+          {/* Verification Results */}
+          {verificationStatus && (
+            <div className={`glass-card rounded-lg p-6 mt-6 ${verificationStatus === "success" ? "bg-green-500/10" : "bg-red-500/10"}`}>
+              <div className="flex items-center gap-4">
+                {verificationStatus === "success" ? (
+                  <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
+                    <CheckCircle2 className="h-6 w-6" />
+                  </div>
+                ) : (
+                  <div className="h-12 w-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
+                    <XCircle className="h-6 w-6" />
+                  </div>
+                )}
+                <div>
+                  <h2 className="text-xl font-semibold">
+                    {verificationStatus === "success" ? "Verification Successful" : "Verification Failed"}
+                  </h2>
+                  <p className="text-muted-foreground">
+                    {verificationStatus === "success" 
+                      ? "This file's hash was found on the blockchain and is registered as intellectual property."
+                      : "No record found for this hash. This file has not been registered or the hash doesn't match."}
+                  </p>
+                </div>
+              </div>
+
+              {verificationStatus === "success" && verificationResult && (
+                <div className="mt-4 pt-4 border-t border-border">
+                  <div className="grid gap-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Owner</span>
+                      <CopyToClipboard 
+                        text={verificationResult.owner} 
+                        displayText={verificationResult.ownerName}
+                        className="hover:text-primary transition-colors"
                       />
-                      <Button 
-                        onClick={() => document.getElementById('file')?.click()}
-                        variant="outline"
-                        className="mt-2"
-                      >
-                        Choose File
-                      </Button>
-                      
-                      {uploadedFile && (
-                        <div className="mt-4 flex items-center justify-center gap-2 text-sm">
-                          <FileIcon className="h-4 w-4 text-primary" />
-                          <span>{uploadedFile.name}</span>
-                          <span className="text-muted-foreground">({Math.round(uploadedFile.size / 1024)} KB)</span>
-                        </div>
-                      )}
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Registration Date</span>
+                      <span>{formatDate(verificationResult.timestamp)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Transaction ID</span>
+                      <CopyToClipboard 
+                        text={verificationResult.txId} 
+                        className="font-mono text-xs hover:text-primary transition-colors"
+                      />
                     </div>
                   </div>
                   
-                  <Button 
-                    onClick={handleVerifyFile}
-                    disabled={isVerifying || isHashing || !uploadedFile}
-                    className="w-full"
-                  >
-                    {isHashing ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Computing hash...
-                      </>
-                    ) : isVerifying ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Verifying...
-                      </>
-                    ) : (
-                      <>
-                        <Shield className="h-4 w-4 mr-2" />
-                        Verify File
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </TabsContent>
-            </Tabs>
-
-            {/* Verification Results */}
-            {verificationStatus && (
-              <div className={`glass-card rounded-lg p-6 mt-6 ${verificationStatus === "success" ? "bg-green-500/10" : "bg-red-500/10"}`}>
-                <div className="flex items-center gap-4">
-                  {verificationStatus === "success" ? (
-                    <div className="h-12 w-12 rounded-full bg-green-500/20 flex items-center justify-center text-green-500">
-                      <CheckCircle2 className="h-6 w-6" />
-                    </div>
-                  ) : (
-                    <div className="h-12 w-12 rounded-full bg-red-500/20 flex items-center justify-center text-red-500">
-                      <XCircle className="h-6 w-6" />
-                    </div>
-                  )}
-                  <div>
-                    <h2 className="text-xl font-semibold">
-                      {verificationStatus === "success" ? "Verification Successful" : "Verification Failed"}
-                    </h2>
-                    <p className="text-muted-foreground">
-                      {verificationStatus === "success" 
-                        ? "This file's hash was found on the blockchain and is registered as intellectual property."
-                        : "No record found for this hash. This file has not been registered or the hash doesn't match."}
-                    </p>
-                  </div>
-                </div>
-
-                {verificationStatus === "success" && verificationResult && (
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <div className="grid gap-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Owner</span>
-                        <CopyToClipboard 
-                          text={verificationResult.owner} 
-                          displayText={verificationResult.ownerName}
-                          className="hover:text-primary transition-colors"
-                        />
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Registration Date</span>
-                        <span>{formatDate(verificationResult.timestamp)}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Transaction ID</span>
-                        <CopyToClipboard 
-                          text={verificationResult.txId} 
-                          className="font-mono text-xs hover:text-primary transition-colors"
-                        />
-                      </div>
-                    </div>
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => router.push(`/dashboard?ipId=${verificationResult.id.toString()}`)}
+                    >
+                      <Shield className="mr-2 h-4 w-4" />
+                      View IP Details
+                    </Button>
                     
-                    <div className="flex gap-2 mt-4">
+                    {fileData && (
                       <Button
                         variant="outline"
                         className="flex-1"
-                        onClick={() => router.push(`/dashboard?ipId=${verificationResult.id.toString()}`)}
+                        onClick={() => {
+                          const a = document.createElement('a')
+                          a.href = fileData.url
+                          a.download = fileData.filename
+                          document.body.appendChild(a)
+                          a.click()
+                          document.body.removeChild(a)
+                        }}
                       >
-                        <Shield className="mr-2 h-4 w-4" />
-                        View IP Details
+                        <Download className="mr-2 h-4 w-4" />
+                        Download File
                       </Button>
-                      
-                      {fileData && (
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Display all registrations for the hash */}
+          {allRegistrations.length > 0 && (
+            <div className="glass-card rounded-lg p-6 mt-6">
+              <h2 className="text-xl font-semibold mb-4">All Registrations for this File</h2>
+              
+              <div className="space-y-4">
+                {allRegistrations.map((reg, index) => (
+                  <div key={index} className={`p-4 rounded-md border ${
+                    reg.status === "Verified" ? "border-green-500/30 bg-green-500/5" : 
+                    reg.status === "UnderDispute" ? "border-yellow-500/30 bg-yellow-500/5" :
+                    reg.status === "Revoked" ? "border-red-500/30 bg-red-500/5" :
+                    "border-border bg-card/50"
+                  }`}>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <CopyToClipboard 
+                            text={reg.owner}
+                            displayText={reg.ownerName}
+                            className="font-medium hover:text-primary transition-colors"
+                          />
+                          {reg.status === "Verified" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
+                          {reg.status === "UnderDispute" && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
+                          {reg.status === "Revoked" && <XCircle className="h-4 w-4 text-red-500" />}
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          Registered on {formatDate(reg.timestamp)}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
                         <Button
                           variant="outline"
-                          className="flex-1"
-                          onClick={() => {
-                            const a = document.createElement('a')
-                            a.href = fileData.url
-                            a.download = fileData.filename
-                            document.body.appendChild(a)
-                            a.click()
-                            document.body.removeChild(a)
-                          }}
+                          size="sm"
+                          onClick={() => router.push(`/dashboard?ipId=${reg.id.toString()}`)}
+                          className="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary"
                         >
-                          <Download className="mr-2 h-4 w-4" />
-                          Download File
+                          <Shield className="h-3 w-3 mr-1" />
+                          View Details
                         </Button>
-                      )}
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => loadFile(reg.id)}
+                          disabled={isLoadingFile}
+                        >
+                          <Eye className="h-3 w-3 mr-1" />
+                          View File
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="mt-2 text-xs text-muted-foreground">
+                      <span className="font-medium">Status:</span> {reg.status}
                     </div>
                   </div>
-                )}
+                ))}
               </div>
-            )}
+            </div>
+          )}
 
-            {/* Display all registrations for the hash */}
-            {allRegistrations.length > 0 && (
-              <div className="glass-card rounded-lg p-6 mt-6">
-                <h2 className="text-xl font-semibold mb-4">All Registrations for this File</h2>
-                
-                <div className="space-y-4">
-                  {allRegistrations.map((reg, index) => (
-                    <div key={index} className={`p-4 rounded-md border ${
-                      reg.status === "Verified" ? "border-green-500/30 bg-green-500/5" : 
-                      reg.status === "UnderDispute" ? "border-yellow-500/30 bg-yellow-500/5" :
-                      reg.status === "Revoked" ? "border-red-500/30 bg-red-500/5" :
-                      "border-border bg-card/50"
-                    }`}>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <CopyToClipboard 
-                              text={reg.owner}
-                              displayText={reg.ownerName}
-                              className="font-medium hover:text-primary transition-colors"
-                            />
-                            {reg.status === "Verified" && <CheckCircle2 className="h-4 w-4 text-green-500" />}
-                            {reg.status === "UnderDispute" && <AlertTriangle className="h-4 w-4 text-yellow-500" />}
-                            {reg.status === "Revoked" && <XCircle className="h-4 w-4 text-red-500" />}
-                          </div>
-                          <div className="text-sm text-muted-foreground mt-1">
-                            Registered on {formatDate(reg.timestamp)}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => router.push(`/dashboard?ipId=${reg.id.toString()}`)}
-                            className="bg-primary/5 border-primary/20 hover:bg-primary/10 text-primary"
-                          >
-                            <Shield className="h-3 w-3 mr-1" />
-                            View Details
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => loadFile(reg.id)}
-                            disabled={isLoadingFile}
-                          >
-                            <Eye className="h-3 w-3 mr-1" />
-                            View File
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="mt-2 text-xs text-muted-foreground">
-                        <span className="font-medium">Status:</span> {reg.status}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {fileData && renderFilePreview()}
-          </div>
+          {fileData && renderFilePreview()}
         </div>
       </main>
 

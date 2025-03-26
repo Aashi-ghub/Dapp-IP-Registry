@@ -265,267 +265,269 @@ export default function DashboardPage() {
       <Navbar />
       <AnimatedBackground className="fixed inset-0 -z-10" density="low" />
       
-      <div className="container mx-auto flex-1 px-4 py-18">
-        <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">IP Dashboard</h1>
-        
-        {isLoading ? (
-          <div className="mt-16 flex flex-col items-center justify-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-            <span className="mt-4 text-xl text-gray-300">Loading your intellectual properties...</span>
-          </div>
-        ) : (
-          <div className="mt-8">
-            {/* No selected IP, show list view */}
-            {!selectedIp ? (
-              <div>
-                <div className="mb-6 flex items-center justify-between">
-                  <h2 className="text-2xl font-semibold">Your Intellectual Properties</h2>
-                  <Button onClick={() => router.push("/register")} className="hover-lift">
-                    <PlusCircle className="mr-2 h-4 w-4" />
-                    Register New IP
-                  </Button>
-                </div>
-                
-                {works.length === 0 ? (
-                  <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-8 text-center border border-gray-700/50">
-                    <FileText className="mx-auto h-12 w-12 text-gray-400" />
-                    <h3 className="mt-4 text-xl font-medium text-white">No intellectual properties found</h3>
-                    <p className="mt-2 text-gray-400">
-                      You haven't registered any intellectual properties yet.
-                    </p>
-                    <Button className="mt-6 hover-lift" onClick={() => router.push("/register")}>
-                      Register Your First IP
+      <main className="flex-1 container px-4 md:px-6 pt-24 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-blue-500">IP Dashboard</h1>
+          
+          {isLoading ? (
+            <div className="mt-16 flex flex-col items-center justify-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+              <span className="mt-4 text-xl text-gray-300">Loading your intellectual properties...</span>
+            </div>
+          ) : (
+            <div className="mt-8">
+              {/* No selected IP, show list view */}
+              {!selectedIp ? (
+                <div>
+                  <div className="mb-6 flex items-center justify-between">
+                    <h2 className="text-2xl font-semibold">Your Intellectual Properties</h2>
+                    <Button onClick={() => router.push("/register")} className="hover-lift">
+                      <PlusCircle className="mr-2 h-4 w-4" />
+                      Register New IP
                     </Button>
                   </div>
-                ) : (
-                  <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {works.map(work => (
-                      <div 
-                        key={work.id} 
-                        className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-md hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer hover:-translate-y-1"
-                        onClick={() => setSelectedIpId(BigInt(work.id))}
-                      >
-                        <div className="flex items-center justify-between mb-4">
-                          <div className={`flex items-center ${getStatusColor(work.status)}`}>
-                            {getStatusIcon(work.status)}
-                            <span className="ml-2 font-medium">{work.status}</span>
-                          </div>
-                          <span className="text-xs px-2 py-1 bg-gray-700/70 rounded-full">{work.category}</span>
-                        </div>
-                        <h3 className="text-lg font-medium mb-3 line-clamp-1">{work.title}</h3>
-                        <div className="flex items-center text-xs text-gray-400 mb-4">
-                          <Clock className="h-3.5 w-3.5 mr-1" />
-                          <span>{work.date}</span>
-                        </div>
-                        <div className="text-xs bg-gray-900/60 rounded-md p-2 mb-4 font-mono truncate">
-                          Hash: {truncateHash(work.hash)}
-                        </div>
-                        <div className="flex justify-between text-xs text-gray-400 mt-auto pt-2 border-t border-gray-700/50">
-                          <div className="flex items-center">
-                            <UserPlus className="h-3.5 w-3.5 mr-1" />
-                            Licenses: {work.licenses}
-                          </div>
-                          <div className="flex items-center">
-                            <AlertTriangle className="h-3.5 w-3.5 mr-1" />
-                            Disputes: {work.disputes}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              /* IP Detail View */
-              <div>
-                <div className="mb-6 flex items-center">
-                  <Button 
-                    variant="outline" 
-                    className="mr-3 group"
-                    onClick={() => setSelectedIp(null)}
-                  >
-                    <ChevronLeft className="mr-1 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-                    Back 
-                  </Button>
-                  <h2 className="text-2xl font-semibold">{selectedIp.title}</h2>
-                </div>
-                
-                <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-md">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="col-span-2 space-y-6">
-                      {/* IP Info Section */}
-                      <div className="bg-gray-900/40 rounded-lg p-5">
-                        <h3 className="text-lg font-medium mb-4 text-primary">IP Information</h3>
-                        <div className="space-y-3">
-                          <div className="flex justify-between border-b border-gray-700/50 pb-2">
-                            <span className="text-gray-400">ID</span>
-                            <span className="font-medium text-white">{selectedIp.id.toString()}</span>
-                          </div>
-                          <div className="flex justify-between border-b border-gray-700/50 pb-2">
-                            <span className="text-gray-400">Status</span>
-                            <span className={`font-medium ${getStatusColor(getStatusText(selectedIp.status))}`}>
-                              {getStatusText(selectedIp.status)}
-                            </span>
-                          </div>
-                          <div className="flex justify-between border-b border-gray-700/50 pb-2">
-                            <span className="text-gray-400">Created</span>
-                            <span className="font-medium text-white">{formatDuration(Number(selectedIp.created))}</span>
-                          </div>
-                          <div className="flex justify-between border-b border-gray-700/50 pb-2">
-                            <span className="text-gray-400">Owner</span>
-                            <CopyToClipboard 
-                              text={selectedIp.owner.toString()}
-                              displayText={formatPrincipal(selectedIp.owner.toString())}
-                              className="font-mono text-sm text-white"
-                            />
-                          </div>
-                          <div className="flex justify-between border-b border-gray-700/50 pb-2">
-                            <span className="text-gray-400">File Hash</span>
-                            <CopyToClipboard
-                              text={selectedIp.file_hash}
-                              displayText={truncateHash(selectedIp.file_hash)}
-                              className="font-mono text-sm text-white"
-                            />
-                          </div>
-                          <div className="flex justify-between pb-2">
-                            <span className="text-gray-400">Stakes</span>
-                            <span className="font-medium text-white">{selectedIp.stakes.toString()} tokens</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* Description Section */}
-                      {selectedIp.description && (
-                        <div className="bg-gray-900/40 rounded-lg p-5">
-                          <h3 className="text-lg font-medium mb-3 text-primary">Description</h3>
-                          <p className="text-gray-300 whitespace-pre-wrap">
-                            {selectedIp.description}
-                          </p>
-                        </div>
-                      )}
-                      
-                      {/* Licenses Section */}
-                      <div className="bg-gray-900/40 rounded-lg p-5">
-                        <div className="flex justify-between items-center mb-4">
-                          <h3 className="text-lg font-medium text-primary">Licenses ({selectedIp.licenses.length})</h3>
-                          {selectedIp.owner.toString() === principalId && (
-                            <Button 
-                              size="sm"
-                              onClick={() => setIsLicenseOpen(true)}
-                              className="hover-lift"
-                            >
-                              <UserPlus className="mr-2 h-4 w-4" />
-                              Issue License
-                            </Button>
-                          )}
-                        </div>
-                        
-                        {selectedIp.licenses.length === 0 ? (
-                          <p className="text-gray-400 text-sm">No licenses have been issued for this IP.</p>
-                        ) : (
-                          <div className="space-y-3">
-                            {selectedIp.licenses.map((license) => (
-                              <div key={license.id.toString()} className="border border-gray-700/50 rounded-lg p-4 bg-gray-800/40">
-                                <div className="flex justify-between text-sm">
-                                  <span className="text-gray-400">Licensee:</span>
-                                  <span className="font-mono text-white">{formatPrincipal(license.licensee.toString())}</span>
-                                </div>
-                                <div className="flex justify-between text-sm mt-2">
-                                  <span className="text-gray-400">Royalty:</span>
-                                  <span className="text-white">{license.royalty.toString()}%</span>
-                                </div>
-                                <div className="mt-3 text-sm">
-                                  <span className="text-gray-400">Terms:</span>
-                                  <p className="mt-1 text-gray-300">{license.terms}</p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      
-                      {/* Disputes Section */}
-                      <div className="bg-gray-900/40 rounded-lg p-5">
-                        <h3 className="text-lg font-medium mb-3 text-primary">Disputes ({selectedIp.disputes.length})</h3>
-                        {selectedIp.disputes.length === 0 ? (
-                          <p className="text-gray-400 text-sm">No disputes have been raised against this IP.</p>
-                        ) : (
-                          <div className="text-gray-300">
-                            <p>This IP has {selectedIp.disputes.length} active dispute(s).</p>
-                            <Link 
-                              href={`/disputes?ipId=${selectedIp.id.toString()}`}
-                              className="text-primary hover:underline flex items-center mt-3 hover-lift"
-                            >
-                              <ExternalLink className="mr-2 h-4 w-4" />
-                              View Disputes
-                            </Link>
-                          </div>
-                        )}
-                      </div>
+                  
+                  {works.length === 0 ? (
+                    <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-8 text-center border border-gray-700/50">
+                      <FileText className="mx-auto h-12 w-12 text-gray-400" />
+                      <h3 className="mt-4 text-xl font-medium text-white">No intellectual properties found</h3>
+                      <p className="mt-2 text-gray-400">
+                        You haven't registered any intellectual properties yet.
+                      </p>
+                      <Button className="mt-6 hover-lift" onClick={() => router.push("/register")}>
+                        Register Your First IP
+                      </Button>
                     </div>
-                    
-                    {/* Actions Section */}
-                    <div className="bg-gray-900/40 rounded-lg p-5 h-fit">
-                      <h3 className="text-lg font-medium mb-4 text-primary">Actions</h3>
-                      <div className="space-y-4">
-                        <Button 
-                          className="w-full hover-lift"
-                          onClick={() => handleDownload(selectedIp.id.toString())}
-                          disabled={isDownloading === selectedIp.id.toString()}
+                  ) : (
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                      {works.map(work => (
+                        <div 
+                          key={work.id} 
+                          className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-md hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer hover:-translate-y-1"
+                          onClick={() => setSelectedIpId(BigInt(work.id))}
                         >
-                          {isDownloading === selectedIp.id.toString() ? (
-                            <>
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                              Downloading...
-                            </>
+                          <div className="flex items-center justify-between mb-4">
+                            <div className={`flex items-center ${getStatusColor(work.status)}`}>
+                              {getStatusIcon(work.status)}
+                              <span className="ml-2 font-medium">{work.status}</span>
+                            </div>
+                            <span className="text-xs px-2 py-1 bg-gray-700/70 rounded-full">{work.category}</span>
+                          </div>
+                          <h3 className="text-lg font-medium mb-3 line-clamp-1">{work.title}</h3>
+                          <div className="flex items-center text-xs text-gray-400 mb-4">
+                            <Clock className="h-3.5 w-3.5 mr-1" />
+                            <span>{work.date}</span>
+                          </div>
+                          <div className="text-xs bg-gray-900/60 rounded-md p-2 mb-4 font-mono truncate">
+                            Hash: {truncateHash(work.hash)}
+                          </div>
+                          <div className="flex justify-between text-xs text-gray-400 mt-auto pt-2 border-t border-gray-700/50">
+                            <div className="flex items-center">
+                              <UserPlus className="h-3.5 w-3.5 mr-1" />
+                              Licenses: {work.licenses}
+                            </div>
+                            <div className="flex items-center">
+                              <AlertTriangle className="h-3.5 w-3.5 mr-1" />
+                              Disputes: {work.disputes}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* IP Detail View */
+                <div>
+                  <div className="mb-6 flex items-center">
+                    <Button 
+                      variant="outline" 
+                      className="mr-3 group"
+                      onClick={() => setSelectedIp(null)}
+                    >
+                      <ChevronLeft className="mr-1 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+                      Back 
+                    </Button>
+                    <h2 className="text-2xl font-semibold">{selectedIp.title}</h2>
+                  </div>
+                  
+                  <div className="bg-gray-800/60 backdrop-blur-sm rounded-xl p-6 border border-gray-700/50 shadow-md">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="col-span-2 space-y-6">
+                        {/* IP Info Section */}
+                        <div className="bg-gray-900/40 rounded-lg p-5">
+                          <h3 className="text-lg font-medium mb-4 text-primary">IP Information</h3>
+                          <div className="space-y-3">
+                            <div className="flex justify-between border-b border-gray-700/50 pb-2">
+                              <span className="text-gray-400">ID</span>
+                              <span className="font-medium text-white">{selectedIp.id.toString()}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-700/50 pb-2">
+                              <span className="text-gray-400">Status</span>
+                              <span className={`font-medium ${getStatusColor(getStatusText(selectedIp.status))}`}>
+                                {getStatusText(selectedIp.status)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-700/50 pb-2">
+                              <span className="text-gray-400">Created</span>
+                              <span className="font-medium text-white">{formatDuration(Number(selectedIp.created))}</span>
+                            </div>
+                            <div className="flex justify-between border-b border-gray-700/50 pb-2">
+                              <span className="text-gray-400">Owner</span>
+                              <CopyToClipboard 
+                                text={selectedIp.owner.toString()}
+                                displayText={formatPrincipal(selectedIp.owner.toString())}
+                                className="font-mono text-sm text-white"
+                              />
+                            </div>
+                            <div className="flex justify-between border-b border-gray-700/50 pb-2">
+                              <span className="text-gray-400">File Hash</span>
+                              <CopyToClipboard
+                                text={selectedIp.file_hash}
+                                displayText={truncateHash(selectedIp.file_hash)}
+                                className="font-mono text-sm text-white"
+                              />
+                            </div>
+                            <div className="flex justify-between pb-2">
+                              <span className="text-gray-400">Stakes</span>
+                              <span className="font-medium text-white">{selectedIp.stakes.toString()} tokens</span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Description Section */}
+                        {selectedIp.description && (
+                          <div className="bg-gray-900/40 rounded-lg p-5">
+                            <h3 className="text-lg font-medium mb-3 text-primary">Description</h3>
+                            <p className="text-gray-300 whitespace-pre-wrap">
+                              {selectedIp.description}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {/* Licenses Section */}
+                        <div className="bg-gray-900/40 rounded-lg p-5">
+                          <div className="flex justify-between items-center mb-4">
+                            <h3 className="text-lg font-medium text-primary">Licenses ({selectedIp.licenses.length})</h3>
+                            {selectedIp.owner.toString() === principalId && (
+                              <Button 
+                                size="sm"
+                                onClick={() => setIsLicenseOpen(true)}
+                                className="hover-lift"
+                              >
+                                <UserPlus className="mr-2 h-4 w-4" />
+                                Issue License
+                              </Button>
+                            )}
+                          </div>
+                          
+                          {selectedIp.licenses.length === 0 ? (
+                            <p className="text-gray-400 text-sm">No licenses have been issued for this IP.</p>
                           ) : (
-                            <>
-                              <Download className="mr-2 h-4 w-4" />
-                              Download File
-                            </>
+                            <div className="space-y-3">
+                              {selectedIp.licenses.map((license) => (
+                                <div key={license.id.toString()} className="border border-gray-700/50 rounded-lg p-4 bg-gray-800/40">
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-gray-400">Licensee:</span>
+                                    <span className="font-mono text-white">{formatPrincipal(license.licensee.toString())}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm mt-2">
+                                    <span className="text-gray-400">Royalty:</span>
+                                    <span className="text-white">{license.royalty.toString()}%</span>
+                                  </div>
+                                  <div className="mt-3 text-sm">
+                                    <span className="text-gray-400">Terms:</span>
+                                    <p className="mt-1 text-gray-300">{license.terms}</p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           )}
-                        </Button>
+                        </div>
                         
-                        <Button 
-                          variant="outline" 
-                          className="w-full hover-lift"
-                          onClick={() => setIsStakingOpen(true)}
-                        >
-                          <Coins className="mr-2 h-4 w-4" />
-                          Stake Tokens
-                        </Button>
-                        
-                        <Button 
-                          variant="outline" 
-                          className="w-full hover-lift"
-                          onClick={() => setIsTransferOpen(true)}
-                        >
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          Transfer Ownership
-                        </Button>
+                        {/* Disputes Section */}
+                        <div className="bg-gray-900/40 rounded-lg p-5">
+                          <h3 className="text-lg font-medium mb-3 text-primary">Disputes ({selectedIp.disputes.length})</h3>
+                          {selectedIp.disputes.length === 0 ? (
+                            <p className="text-gray-400 text-sm">No disputes have been raised against this IP.</p>
+                          ) : (
+                            <div className="text-gray-300">
+                              <p>This IP has {selectedIp.disputes.length} active dispute(s).</p>
+                              <Link 
+                                href={`/disputes?ipId=${selectedIp.id.toString()}`}
+                                className="text-primary hover:underline flex items-center mt-3 hover-lift"
+                              >
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                View Disputes
+                              </Link>
+                            </div>
+                          )}
+                        </div>
                       </div>
                       
-                      {selectedIp.owner.toString() !== principalId && (
-                        <div className="pt-6 mt-6 border-t border-gray-700/50">
-                          <h4 className="text-sm font-medium mb-3 text-gray-300">For Other Users</h4>
+                      {/* Actions Section */}
+                      <div className="bg-gray-900/40 rounded-lg p-5 h-fit">
+                        <h3 className="text-lg font-medium mb-4 text-primary">Actions</h3>
+                        <div className="space-y-4">
                           <Button 
-                            variant="destructive" 
                             className="w-full hover-lift"
-                            onClick={() => setIsDisputeOpen(true)}
+                            onClick={() => handleDownload(selectedIp.id.toString())}
+                            disabled={isDownloading === selectedIp.id.toString()}
                           >
-                            <AlertTriangle className="mr-2 h-4 w-4" />
-                            Raise Dispute
+                            {isDownloading === selectedIp.id.toString() ? (
+                              <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                Downloading...
+                              </>
+                            ) : (
+                              <>
+                                <Download className="mr-2 h-4 w-4" />
+                                Download File
+                              </>
+                            )}
+                          </Button>
+                          
+                          <Button 
+                            variant="outline" 
+                            className="w-full hover-lift"
+                            onClick={() => setIsStakingOpen(true)}
+                          >
+                            <Coins className="mr-2 h-4 w-4" />
+                            Stake Tokens
+                          </Button>
+                          
+                          <Button 
+                            variant="outline" 
+                            className="w-full hover-lift"
+                            onClick={() => setIsTransferOpen(true)}
+                          >
+                            <UserPlus className="mr-2 h-4 w-4" />
+                            Transfer Ownership
                           </Button>
                         </div>
-                      )}
+                        
+                        {selectedIp.owner.toString() !== principalId && (
+                          <div className="pt-6 mt-6 border-t border-gray-700/50">
+                            <h4 className="text-sm font-medium mb-3 text-gray-300">For Other Users</h4>
+                            <Button 
+                              variant="destructive" 
+                              className="w-full hover-lift"
+                              onClick={() => setIsDisputeOpen(true)}
+                            >
+                              <AlertTriangle className="mr-2 h-4 w-4" />
+                              Raise Dispute
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+              )}
+            </div>
+          )}
+        </div>
+      </main>
       
       {/* Dialogs */}
       <StakeDialog 
